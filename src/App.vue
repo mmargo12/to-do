@@ -1,12 +1,12 @@
 <template>
 <main class="app">
   <section class="greeting">
-    <h2 class="title">
+    <h1 class="title">
       What's upp, <input type="text" placeholder="Name here" v-model="name">
-    </h2>
+    </h1>
   </section>
   <section class="create-todo">
-    <h3>CREATE A TODO</h3>
+    <h2>CREATE A TODO</h2>
     <form @submit.prevent="addTodo">
       <h4>What's on your todo list?</h4>
       <input 
@@ -14,6 +14,17 @@
         placeholder="e.g. 'do work'"
         v-model="inputContent"
       >
+      <h4>Add details if needed</h4>
+      <!-- <input 
+        type="text"
+        placeholder="e.g. '12pm at Pizza Hut'"
+        v-model="inputDetails"
+      > -->
+      <textarea 
+        rows="5" 
+        placeholder="e.g. '12pm at Pizza Hut'" 
+        v-model="inputDetails">
+      </textarea>
       <h4>Pick a category</h4>
       <div class="options">
         <label>
@@ -53,9 +64,12 @@
           <span :class="`bubble ${todo.category}`"></span>
         </label>
         <div class="todo-content">
-          <input type="text" v-model="todo.content">
+          <input class="todo-title" type="text" v-model="todo.content">
+          <textarea v-model="todo.details" rows="3" v-show="todo.showDetails"></textarea>
+          <!-- <input class="todo-details" type="text" v-model="todo.details" v-show="showDetails"> -->
         </div>
         <div class="actions">
+          <button class="details" @click="todo.showDetails = !todo.showDetails">Details</button>
           <button class="delete" @click="removeTodo(todo)">Delete</button>
         </div>
       </div>
@@ -71,6 +85,7 @@ const todos = ref([])
 const name = ref('')
 
 const inputContent = ref('')
+const inputDetails = ref('')
 const inputCategory = ref(null)
 
 const todoAsc = computed(() => todos.value.slice(0).sort((a,b) =>{
@@ -83,12 +98,15 @@ const addTodo = () => {
   }
   todos.value.push({
     content: inputContent.value,
+    details: inputDetails.value,
     category: inputCategory.value,
+    showDetails: false,
     done: false,
     createdAt: new Date().getTime()
   })
 
   inputContent.value = ''
+  inputDetails.value = ''
   inputCategory.value = null
 }
 
